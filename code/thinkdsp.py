@@ -6,6 +6,7 @@ License: MIT License (https://opensource.org/licenses/MIT)
 """
 
 import copy
+from typing import Self, Callable
 
 import numpy as np
 import random
@@ -27,7 +28,6 @@ except ImportError:
         "Can't import Audio from IPython.display; " "Wave.make_audio() will not work."
     )
 
-np.set_printoptions(suppress=True)
 PI2 = np.pi * 2
 
 
@@ -843,16 +843,23 @@ class Wave:
         """
         self.ys = apodize(self.ys, self.framerate, denom, duration)
 
-    def hamming(self):
+    def hamming(self) -> Self:
         """Apply a Hamming window to the wave."""
-        self.ys *= np.hamming(len(self.ys))
+        new_wave = self.copy()
+        new_wave.ys *= np.hamming(len(self.ys))
+        return new_wave
 
-    def window(self, window):
+    def window(self, window) -> None:
         """Apply a window to the wave.
 
         window: sequence of multipliers, same length as self.ys
         """
         self.ys *= window
+
+    def apply_window(self, window_func: Callable[int, np.ndarray]) -> Self:
+        new_wave = self.copy()
+        new_wave.ys *= window_func(len(new_wave))
+        return new_wave
 
     def scale(self, factor):
         """Multplies the wave by a factor.
