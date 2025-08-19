@@ -27,6 +27,7 @@ except ImportError:
         "Can't import Audio from IPython.display; " "Wave.make_audio() will not work."
     )
 
+np.set_printoptions(suppress=True)
 PI2 = np.pi * 2
 
 
